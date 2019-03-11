@@ -1,25 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {Apollo} from 'apollo-angular';
-import gql from 'graphql-tag';
+import { Component, OnInit } from "@angular/core";
+import { Apollo } from "apollo-angular";
+import gql from "graphql-tag";
 
 @Component({
-  selector: 'exchange-rates',
-  template: `
-    <div *ngIf="loading">
-      Loading...
-    </div>
-    <div *ngIf="error">
-      Error :(
-    </div>
-    <div *ngIf="users">
-      <div *ngFor="let user of users">
-        <p>{{user.firstname}}</p>
-      </div>
-    </div>
-  `,
+  selector: 'app-tab1',
+  templateUrl: 'tab1.page.html',
+  styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page implements OnInit {
-  user: any[];
+  users: any;
   loading = true;
   error: any;
 
@@ -29,14 +18,20 @@ export class Tab1Page implements OnInit {
     this.apollo
       .watchQuery({
         query: gql`
-        users{
-          id
-          firstname
-        }
-        `,
+          {
+            users {
+              id
+              firstname
+              email
+              watchList {
+                title
+              }
+            }
+          }
+        `
       })
-      .valueChanges.subscribe(result => {
-        this.user = result.data && result.data.users;
+      .valueChanges.subscribe((result:any) => {
+        this.users = result.data && result.data.users;
         this.loading = result.loading;
         this.error = result.errors;
       });
